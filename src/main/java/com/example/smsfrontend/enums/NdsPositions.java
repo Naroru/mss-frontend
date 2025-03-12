@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public enum NdsPositions {
 
+  ZERO(0),
   TEN(10),
   FIFTEEN(15),
-  ZERO(0),
   TWENTY(20);
 
   private final int value;
@@ -15,5 +15,4 @@ public enum NdsPositions {
   NdsPositions(int value) {
     this.value = value;
   }
-
 }

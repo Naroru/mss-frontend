@@ -2,7 +2,6 @@ package com.example.smsfrontend.view.product;
 
 import com.example.smsfrontend.proxy.product.Product;
 import com.example.smsfrontend.proxy.product.ProductAdapter;
-import com.example.smsfrontend.proxy.segment.Segment;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.grid.Grid;
@@ -16,7 +15,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.lumo.LumoIcon;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -45,7 +43,9 @@ public class ProductList extends VerticalLayout implements KeyNotifier {
         this.editor = editor;
 
         configureGrid();
-        add(grid);
+        updateGridContent();
+
+        add(grid, editor);
     }
 
 
@@ -53,11 +53,17 @@ public class ProductList extends VerticalLayout implements KeyNotifier {
         grid.addColumn(createDeleteComponentRenderer()).setWidth("3em").setFlexGrow(0);
         grid.addColumn(Product::getId).setHeader("Код").setKey("code");
         grid.addColumn(Product::getName).setHeader("Наименование");
-        grid.addColumn(Product::getNds).setHeader("НДС");
+        grid.addColumn(product -> product.getNds().getValue()).setHeader("НДС");
         grid.addColumn(product -> product.getSegment().getName()).setHeader("Сегмент");
 
         grid.sort(List.of(new GridSortOrder<>(grid.getColumnByKey("code"), ASCENDING)));
 
+        grid.addItemDoubleClickListener(event -> editor.editProduct(event.getItem()));
+
+    }
+
+    private void updateGridContent(){
+        grid.setItems(adapter.findAll());
     }
 
     private ComponentRenderer<Div, Product> createDeleteComponentRenderer() {
